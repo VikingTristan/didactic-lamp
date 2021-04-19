@@ -1,28 +1,23 @@
 #!/usr/bin/env bash
 
+# The purpose of this file is to find out what branches are merged, delete them from git,
+# then pass the branch name as an output so that our janitor can delete that branch folder from azure.
+
 set -o errexit # Abort if any command fails
 
-# Ensure that we have all branches
-git fetch --all
-git branch -r | grep -v '\->' | while read remote; do
-  branch_name="${remote#origin/}" 
-
-  if git show-ref --verify --quiet "refs/heads/$branch_name" ; then
-    echo "Branch '$branch_name' already exists."
-  else
-    echo "Adding '$branch_name' tracking '$remote'."
-    git branch --track "$branch_name" "$remote";
-  fi
-done
-
-git pull --ff-only --all
-
-branches=$(git branch --merged main)
-for branch in $branches
+merged_branches=$(git branch -r --merged develop)
+for merged_branch in $merged_branches
 do
-    [[ $branch != *"feature/"* ]] && continue
-    echo "::set-output name=BRANCH_TO_DELETE::$branch"
-    echo "Deleting branch $branch"
-    
-    # git push origin --delete "$branch"
+    # Skip branches that are not feature branches as they are not deployed to Azure
+    [[ $merged_branch != *"feature/"* ]] && continue
+    # Remove prefixes from branchname
+    branch_to_delete=${merged_branch#"origin/"}
 done
+
+if [ -z ${branch_to_delete+x} ]; then
+  echo "No feature branch to clean up."
+else
+  echo "::set-output name=BRANCH_TO_DELETE::$branch_to_delete"
+  echo "Deleting branch $branch_to_delete"
+  git push origin --delete "$branch_to_delete"
+fi
