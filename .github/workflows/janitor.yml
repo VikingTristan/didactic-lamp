@@ -20,7 +20,7 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
 
-      - name: Check if commit is merge commit
+      - name: Clean merged feature branches
         id: branch
         run: ./.github/scripts/clean-merged-branches.sh
   build:
