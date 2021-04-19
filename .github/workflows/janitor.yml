@@ -1,0 +1,39 @@
+name: Test Janitor
+on:
+  push:
+    branches:
+      - "develop"
+
+jobs:
+  branch:
+    name: Find branch name
+    runs-on: ubuntu-latest
+    outputs:
+      branchname: ${{ steps.branch.outputs.BRANCH_TO_DELETE }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+      - name: Check if commit is merge commit
+        id: branch
+        run: ./.github/scripts/clean-merged-branches.sh
+  build:
+    needs: branch
+    name: Test cleanup
+    if: ${{ needs.branch.outputs.branchname }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        brand: ["foo", "bar"]
+    steps:
+      - name: Hello
+        run: echo "Hola ${{ needs.branch.outputs.branchname }}"
+      # - uses: actions/checkout@v2
+      #   with:
+      #     fetch-depth: 2
