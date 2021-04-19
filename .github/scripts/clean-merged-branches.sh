@@ -3,7 +3,7 @@
 # The purpose of this file is to find out what branches are merged, delete them from git,
 # then pass the branch name as an output so that our janitor can delete that branch folder from azure.
 
-# set -o errexit # Abort if any command fails
+set -o errexit # Abort if any command fails
 
 merged_branches=$(git branch -r --merged develop)
 for merged_branch in $merged_branches
@@ -19,5 +19,5 @@ if [ -z ${branch_to_delete+x} ]; then
 else
   echo "::set-output name=BRANCH_TO_DELETE::$branch_to_delete"
   echo "Deleting branch $branch_to_delete"
-#   git push origin --delete "$branch_to_delete"
+  git push origin --delete "$branch_to_delete"
 fi
