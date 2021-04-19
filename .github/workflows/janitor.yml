@@ -2,7 +2,7 @@ name: Test Janitor
 on:
   push:
     branches:
-      - "develop"
+      - "*"
 
 jobs:
   branch:
