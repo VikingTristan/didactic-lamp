@@ -17,7 +17,7 @@
 
 # git pull --ff-only --all
 
-branches=$(git branch -r --merged develop)
+branches=$(git branch -r --merged develop) 
 echo "Merged branches $branches"
 for branch in $branches
 do
