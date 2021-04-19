@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# set -o errexit # Abort if any command fails
+set -o errexit # Abort if any command fails
 
 branches=$(git branch -r --merged develop)
 for branch in $branches
@@ -13,5 +13,5 @@ do
     echo "::set-output name=BRANCH_TO_DELETE::$branch"
     echo "Deleting branch $branch"
     
-    # git push origin --delete "$branch"
+    git push origin --delete "$branch"
 done
