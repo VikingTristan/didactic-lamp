@@ -18,8 +18,10 @@
 # git pull --ff-only --all
 
 branches=$(git branch -r --merged develop)
+echo "Merged branches $branches"
 for branch in $branches
 do
+    echo "Looping through branch $branch"
     [[ $branch != *"feature/"* ]] && continue
     echo "::set-output name=BRANCH_TO_DELETE::$branch"
     echo "Deleting branch $branch"
